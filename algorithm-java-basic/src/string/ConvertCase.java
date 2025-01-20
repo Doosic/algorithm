@@ -48,11 +48,14 @@ public class ConvertCase {
     String answer = "";
 
     for (char c : str.toCharArray()){
-      int cNum = (int) c;
-      if(cNum >= 65 && cNum <= 90){
-        answer += (char) (cNum + 32);
+
+      // char 은 메모리상에 정수형으로 저장이 되기 때문에 int로 형변환을 해주지 않아도 된다고 한다.
+
+      if(c >= 65 && c <= 90){
+        // cNum을 숫자로 계산하여 문자에 저장할 때는 형변환이 필요하다.
+        answer += (char) (c + 32);
       }else{
-        answer += (char) (cNum - 32);
+        answer += (char) (c - 32);
       }
     }
 
