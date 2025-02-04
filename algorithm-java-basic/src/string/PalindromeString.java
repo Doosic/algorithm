@@ -22,6 +22,7 @@ public class PalindromeString {
        /*
         # 풀이 방법들
         1.문자열의 앞뒤를 한칸씩 좁혀가며 검사하는 방법(전부 대문자로 변경)
+        2.뒤집은 문자열을 하나 만들고 어퍼, 로우, 이그노어 케이스를 사용하여 비교한다.
 
         # 내가 선택한 방법
         how:
@@ -49,6 +50,19 @@ public class PalindromeString {
 
     return answer;
   }
+
+  public String solution2(String str){
+    // 기본값을 담아둔다.
+    String answer = "NO";
+    // 입력받은 문자열을 뒤집어준다.
+    String tmp = new StringBuilder(str).reverse().toString();
+    // 대소문자 상관하지않는 ignoreCase를 사용하여 비교한다.
+    if(str.equalsIgnoreCase(tmp)){
+      return "YES";
+    }
+    return answer;
+  }
+
 
   public static void main(String[] args) {
     PalindromeString palindromeString = new PalindromeString();
