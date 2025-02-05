@@ -35,7 +35,7 @@ public class RegexPalindrome {
 
     // 문자열 원본과, 뒤집은 문자열을 비교한다.
     if(str.equals(tmp)){
-      return "YES";
+      answer = "YES";
     }
 
     return answer;
@@ -44,7 +44,9 @@ public class RegexPalindrome {
   public static void main(String[] args) {
     RegexPalindrome regexPalindrome = new RegexPalindrome();
     Scanner sc = new Scanner(System.in);
-    String str = sc.next();
+    // next() 는 띄어쓰기 뒷 부분을 읽지 않는다.
+    // nextLine()은 개행되기 전까지 읽어들인다.
+    String str = sc.nextLine();
 
     System.out.println(regexPalindrome.solution(str));
   }
