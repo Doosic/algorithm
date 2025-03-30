@@ -20,6 +20,10 @@ public class TemporaryClassLeader {
         이 예에서 4번 학생이 전체 학생 중에서 같은 반이었던 학생 수가 제일 많으므로 임시 반장이 된다.
         각 학생들이 1학년부터 5학년까지 속했던 반이 주어질 때, 임시 반장을 정하는 프로그램을 작성하시오.
 
+        !!! 중요
+        같은 반이 한번 되었던 학생은 체크하지 않는다.
+        같은 반이 되었던 학생의 수를 세는 것이기 때문에 같은 학생을 2번 체크하면 안됨
+
         - 입력
         첫째 줄에는 반의 학생 수를 나타내는 정수가 주어진다. 학생 수는 3 이상 1000 이하이다.
         둘째 줄부터는 1번 학생부터 차례대로 각 줄마다 1학년부터 5학년까지 몇 반에 속했었는지를 나타내는 5개의 정수가 빈칸 하나를 사이에 두고 주어진다.
@@ -31,10 +35,10 @@ public class TemporaryClassLeader {
 
 
         # 문제풀이 고민
-        - 각 column 별로 가장 많이 등장한 반을 체크해둔다.
-        - 많이 등장했던 반에 일치하는 학생들을 찾는다.
-        - 변수에 많이 일치하는 학생들을 순서대로 저장해둔다.
-        - 더 많이 일치하는 학생이 나올수록 변수에 값을 변경한다. 동일한 등장횟수는 무시.
+        - 브르투포스로 풀이
+        - 1번 학생과, 2번학생 비교, 1번과 3번 비교....
+        - 2번화 1번 비교, 2번과 3번 비교.....
+        - 이때 같은반이 되었던 학생 수를 체크해야 하기 때문에 같은반이 한번 되었던 학생은 제외한다.
      */
 
     /*
@@ -46,66 +50,34 @@ public class TemporaryClassLeader {
         6 5 2 6 7
         8 4 2 2 2
      */
-    public int solution(int n, int[][] arr, int maxGrade, int maxClass){
+    public int solution(int n, int[][] arr){
         int answer = 0;
+        // tmp 값은 반복문 바깥에 선언한다. 안쪽에 선언시 반복문이 초기화 될 때 함께 0으로 초기화되기 때문
+        int tmpCnt = 0;
+        int cnt = 0;
 
-        // 학년별로 반마다 몇명이 속했었는지 체크한다. 1~5학년, 1~9반
-        // class는 index를 동일하게 사용하기 위해 +1을 해줬다. 0번 인덱스는 사용하지 않는 것으로.
-        int[][] classStudents = new int[maxGrade][maxClass+1];
-        for(int i = 0; i < n; i++){
-            for(int j = 0; j < maxGrade; j++){
-                classStudents[i][arr[j][i]]++;
-            }
-        }
-        /*
-            0번 인덱스는 사용안함
-            1학년 [0, 0, 1, 0, 1, 1, 1, 0, 1, 0]
-            2학년 [0, 1, 0, 1, 1, 2, 0, 0, 0, 0]
-            3학년 [0, 1, 3, 0, 0, 0, 0, 0, 0, 1]
-            4학년 [0, 0, 1, 0, 1, 0, 2, 1, 0, 0]
-            5학년 [0, 0, 1, 1, 1, 0, 0, 1, 1, 0]
-         */
-
-        // 학년마다 가장 많이 속했던 반을 추출한다.
-        // index가 학년이되고, 그 안의 숫자가 가장 많이 속했던 반이 되어야함
-        int[] studentsNums = new int[maxGrade]; // 0~4
-
-        for(int i = 0; i < maxGrade; i++){
-            int tmpNum = 0;
-            for(int j = 1; j < maxClass+1; j++){
-                if(classStudents[i][j] > 1 && classStudents[i][j] > tmpNum){
-                    tmpNum = classStudents[i][j];
-                    studentsNums[i] = j;
+        // 학생1~N명
+        for(int i = 1; i <= n; i++){
+            // 학생 1~N명
+            for(int j = 1; j <= n; j++){
+                // 학년 1~5학년
+                for(int k = 1; k <= 5; k++){
+                    // 1번 학생 1학년~5학년
+                    // N번 학생 1학년~5학년 비교
+                    if(arr[i][k] == arr[j][k]){
+                        cnt++;
+                        // 같은반이 되었던 학생 수를 체크하는 것이기 때문에
+                        // 이미 함깨했던 학생 즉, 중복된 학생은 제외
+                        break;
+                    }
                 }
             }
-        }
 
-        // 1학년 0반
-        // 2학년 5반
-        // 3학년 2반
-        // 4학년 6반
-        // 5학년 0반
-        // [0, 5, 2, 6, 0]
-
-        // 학생별로 일치하는 반이 많은 학생을 찾는다.
-        int maxCount = 0;
-        for(int i = 0; i < n; i++){
-            int tmpCount = 0;
-            for(int j = 0; j < maxGrade; j++){
-                if(arr[i][j] == studentsNums[j]){
-                    tmpCount++;
-                }
+            if(cnt > tmpCnt){
+                answer = i;
+                tmpCnt = cnt;
             }
-            if(tmpCount > maxCount){
-                answer = i+1;
-                maxCount = tmpCount;
-            }
-            tmpCount = 0;
-        }
-
-        // 겹치는 학생이 없을 경우에는 1번 학생이 무조건 임시반장이 된다.
-        if(answer <= 0){
-            answer = 1;
+            cnt = 0;
         }
 
         return answer;
@@ -115,16 +87,23 @@ public class TemporaryClassLeader {
         TemporaryClassLeader t = new TemporaryClassLeader();
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
-        int maxGrade = 5;
-        int maxClass = 9;
-        int[][] arr = new int[n][maxGrade];
+        int[][] arr = new int[n+1][6];
 
-        for(int i = 0; i < n; i++){
-            for(int j = 0; j < n; j++){
+        for(int i = 1; i <= n; i++){
+            for(int j = 1; j <= n; j++){
                 arr[i][j] = sc.nextInt();
             }
         }
+        /*
+            * 입력된 값
+            [0, 0, 0, 0, 0, 0]
+            [0, 2, 3, 1, 7, 3]
+            [0, 4, 1, 9, 6, 8]
+            [0, 5, 5, 2, 4, 4]
+            [0, 6, 5, 2, 6, 7]
+            [0, 8, 4, 2, 2, 2]
+         */
 
-        System.out.println(t.solution(n, arr, maxGrade, maxClass));
+        System.out.println(t.solution(n, arr));
     }
 }
