@@ -1,6 +1,5 @@
 package two_pointer;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class ArraysSort {
@@ -25,22 +24,50 @@ public class ArraysSort {
         - 2개의 배열을 한 배열로 합친 후, 자바 List 의 정렬 메서드 사용
         - TowPointer 알고리즘을 사용하여 정렬
             1.두 배열을 합친다.
-            2.제일 작은 값을 LP 에 배치한다.(LP는 0번 위치를 가르킨다.)
-            3.그 다음 작은 값을 두 번째에 배치한다.(LP는 1번 위치를 가르킨다.)
-            .....
+            2.RP는 반복문을 탐색하며 제일 작은 값에 위치시키고, LP에 위치한 값과 자리를 교환한다.(LP는 0번 위치를 가르킨다.)
+            3.RP는 LP와 같은 위치를 다시 바라보게한다.
+            4.RP는 반복문을 탐색하며 제일 작은 값에 위치시키고, LP에 위치한 값과 자리를 교환한다.(LP는 1번 위치를 가르킨다.)
+            5.RP는 LP와 같은 위치를 다시 바라보게한다.
+            ..... 제일 작은 수들부터 앞에 위치시키는 방법.
      */
 
     public int[] solution(int[] arr1, int[] arr2){
+        // 두개의 배열을 합쳐서 담아줄 배열을 만든다.
         int[] answer = new int[arr1.length + arr2.length];
         int count = 0;
 
+        // 첫 번째 arr1 을 담아준다.
         for(int i = 0; i < arr1.length; i++){
             answer[i] = arr1[count++];
         }
+        // 두 번째 arr2를 담아준다. 이때 첫번째 arr1가 먼저 담겨있으므로
+        // count 변수를 사용해 그 다음 위치부터 값을 채워준다.
         for(int i = count; i < answer.length; i++){
             answer[i] = arr2[i-count];
         }
 
+        int lp = 0;
+        int rp = 0;
+
+        for(int i = 0; i < answer.length; i++){
+            // 비교를 위해 rp의 값으로 초기화한다.
+            int num = answer[rp];
+            for(int j = lp; j < answer.length; j++){
+                // num보다 작은 값이 존재한다면 해당 위치를 rp에 저장, 값은 비교를 위해 num에 저장(제일 작은 수 찾기)
+                if(answer[j] < num){
+                    rp = j;
+                    num = answer[j];
+                }
+            }
+            // 제일 작은 값과 lp에 위치한 값의 자리교환
+            int temp = answer[lp];
+            answer[lp] = num;
+            answer[rp] = temp;
+            // lp는 다음 포인트(인덱스)를 가르킨다. 0, 1, 2, 3....
+            lp++;
+            // rp는 가장 작은 수를 바라보다가 다음 반복문에서는 다시 lp와 같은 위치를 바라보며 작은 값을 찾는다.
+            rp = lp;
+        }
 
         return answer;
     }
